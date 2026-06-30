@@ -253,7 +253,7 @@
             <div class="time-summary" id="summary-hand">請勾選上方項目計算工時...</div>
         </div>
         
-        <!-- 足部時間估算面板 (已移除延甲按鈕，按鈕會自動完美排版) -->
+        <!-- 足部時間估算面板 (已移除延甲) -->
         <div class="time-box" id="t-box-foot">
             <div class="start-input-area">
                 ⏰ 開始時間：<input type="time" id="startTime-foot" value="13:30" onchange="calcTime('foot')">
@@ -278,7 +278,7 @@
             <div class="time-summary" id="summary-foot">請勾選上方項目計算工時...</div>
         </div>
 
-        <!-- 數字計算機原本的顯示區域（純算錢） -->
+        <!-- 數字計算機顯示區域 -->
         <div class="history" id="history"></div>
         <div class="result" id="result">0</div>
     </div>
@@ -305,7 +305,7 @@
             <div class="scroll-box">
                 <button onclick="addPrice('手部帶圖款', 690)">$690</button>
                 <button onclick="addPrice('手部帶圖款', 790)">$790</button>
-                <button onclick="addPrice('手部帶圖款', 880)">$890</button>
+                <button onclick="addPrice('手部帶圖款', 890)">$890</button>
                 <button onclick="addPrice('手部帶圖款', 990)">$990</button>
             </div>
         </div>
@@ -317,16 +317,25 @@
         </div>
     </div>
 
-    <!-- 足部價目區域 -->
+    <!-- 足部價目區域 (已同步加入帶圖款式滑動選單) -->
     <div id="m-sec-foot" class="menu-section">
         <div class="section-title">基礎與造型</div>
         <div class="btn-group">
             <button onclick="addPrice('足部單色', 590)">單色 $590</button>
             <button onclick="addPrice('足部鏡面/貓眼/亮片/漸層', 790)">鏡面/貓眼/亮片/漸層 $790</button>
         </div>
+        <div class="slider-container">
+            <div class="slider-title">帶圖款式</div>
+            <div class="scroll-box">
+                <button onclick="addPrice('足部帶圖款', 690)">$690</button>
+                <button onclick="addPrice('足部帶圖款', 790)">$790</button>
+                <button onclick="addPrice('足部帶圖款', 890)">$890</button>
+                <button onclick="addPrice('足部帶圖款', 990)">$990</button>
+            </div>
+        </div>
         <div class="section-title">額外加項目服務</div>
         <div class="btn-group">
-            <button onclick="addPrice('he店續卸', 250)">他店續卸</button>
+            <button onclick="addPrice('他店續卸', 250)">他店續卸</button>
             <button onclick="addPrice('足純卸甲', 400)">足純卸甲 $400</button>
         </div>
     </div>
@@ -370,13 +379,11 @@
         foot: { styleId: null, minMins: 0, maxMins: 0, addons: { photo: 10, discuss: 15 } }
     };
 
-    // 初始化時間計算顯示
     window.onload = function() {
         calcTime('hand');
         calcTime('foot');
     };
 
-    // 頂部時間分頁切換
     function switchTimeTab(tab) {
         document.querySelectorAll('[id^="t-tab-"]').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('[id^="t-box-"]').forEach(box => box.classList.remove('active'));
@@ -384,7 +391,6 @@
         document.getElementById('t-box-' + tab).classList.add('active');
     }
 
-    // 中間價目表分頁切換
     function switchMenuTab(tab) {
         document.querySelectorAll('[id^="m-tab-"]').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('[id^="m-sec-"]').forEach(sec => sec.classList.remove('active'));
@@ -485,6 +491,7 @@
         resultDiv.innerText = currentInput.replace(/\*/g, '×').replace(/\//g, '÷');
     }
 
+    style = window.getComputedStyle || function() {};
     function appendNum(val) {
         if (currentInput === '0' && val !== '.') currentInput = '';
         currentInput += val;
@@ -538,7 +545,6 @@
         };
         document.getElementById('h-add-5').classList.add('selected');
         document.getElementById('h-add-6').classList.add('selected');
-        // 注意：足部移除了 addon 1 和 2，這裡只重新勾選剩下的預設項目
         document.getElementById('f-add-5').classList.add('selected');
         document.getElementById('f-add-6').classList.add('selected');
         calcTime('hand');
