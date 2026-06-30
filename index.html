@@ -67,17 +67,18 @@
             flex: 1;
             background: #FAF6F0;
             border: 1px solid rgba(193, 154, 107, 0.3);
-            padding: 6px;
-            font-size: 12px;
-            border-radius: 8px;
+            padding: 8px 6px;
+            font-size: 13px;
+            border-radius: 10px;
             cursor: pointer;
             color: #7A695C;
             font-weight: bold;
+            transition: all 0.2s;
         }
         .time-tab-btn.active {
-            background: #EADBC8;
-            border-color: #C19A6B;
-            color: var(--text-color);
+            background: var(--tab-active);
+            border-color: var(--tab-active);
+            color: white;
         }
 
         .time-box {
@@ -143,25 +144,18 @@
         .history { text-align: right; font-size: 13px; color: #A69485; min-height: 18px; word-break: break-all; }
         .result { text-align: right; font-size: 28px; font-weight: bold; margin-top: 3px; color: #6F5E53; }
         
-        .tabs { display: flex; gap: 5px; margin-bottom: 12px; }
-        .tab-btn {
-            flex: 1; background: #F0E6DB; border: none; padding: 10px;
-            font-size: 14px; border-radius: 10px; cursor: pointer; color: var(--text-color); font-weight: bold;
-        }
-        .tab-btn.active { background: var(--tab-active); color: white; }
-        
-        .menu-section { display: none; flex-direction: column; gap: 10px; }
+        .menu-section { display: none; flex-direction: column; gap: 10px; margin-top: 5px;}
         .menu-section.active { display: flex; }
         
         .section-title {
             font-size: 13px; font-weight: bold; color: #A68A78;
-            border-left: 3px solid var(--tab-active); padding-left: 6px; margin: 4px 0;
+            border-left: 3px solid var(--tab-active); padding-left: 6px; margin: 6px 0 4px 0;
         }
         .btn-group { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
         .btn-group-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
         .btn-promo-style { background: #E6D5C3; border: 1px dashed var(--tab-active); font-weight: bold; padding: 13px 5px; }
-        .slider-container { background: #FDFBF7; padding: 8px; border-radius: 12px; border: 1px dashed var(--btn-accent); }
-        .slider-title { font-size: 12px; margin-bottom: 6px; display: flex; justify-content: space-between; }
+        .slider-container { background: #FDFBF7; padding: 10px 8px; border-radius: 12px; border: 1px dashed var(--btn-accent); }
+        .slider-title { font-size: 13px; font-weight: bold; color: #A68A78; margin-bottom: 6px; }
         .scroll-box { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
         .scroll-box button { padding: 10px 0; font-size: 13px; background: #F3ECE4; text-align: center; }
         
@@ -191,29 +185,31 @@
     
     <div class="screen">
         <div class="time-tabs">
-            <button class="time-tab-btn active" id="time-tab-hand" onclick="switchTimeTab('hand')">💅 手部工時看板</button>
-            <button class="time-tab-btn" id="time-tab-foot" onclick="switchTimeTab('foot')">🦶 足部工時看板</button>
+            <button class="time-tab-btn active" id="time-tab-hand" onclick="globalSwitch('hand')">💅 手部服務看板</button>
+            <button class="time-tab-btn" id="time-tab-foot" onclick="globalSwitch('foot')">🦶 足部服務看板</button>
+            <button class="time-tab-btn" id="time-tab-presson" onclick="globalSwitch('presson')">🛍️ 穿戴甲看板</button>
         </div>
+        
         <div class="time-box active" id="timeBox-hand">
             <div class="start-input-area">
                 ⏰ 開始時間：<input type="time" id="startTime-hand" value="13:30" onchange="formatTimeDisplay()">
             </div>
-            <div id="timeDetails-hand">請先點選項目計算時間...</div>
+            <div id="timeDetails-hand">請先在下方點選項目...</div>
         </div>
+        
         <div class="time-box" id="timeBox-foot">
             <div class="start-input-area">
                 ⏰ 開始時間：<input type="time" id="startTime-foot" value="13:30" onchange="formatTimeDisplay()">
             </div>
-            <div id="timeDetails-foot">請先點選項目計算時間...</div>
+            <div id="timeDetails-foot">請先在下方點選項目...</div>
         </div>
+
+        <div class="time-box" id="timeBox-presson">
+            <div id="timeDetails-presson">請先在下方點選項目...</div>
+        </div>
+        
         <div class="history" id="history"></div>
         <div class="result" id="result">0</div>
-    </div>
-    
-    <div class="tabs">
-        <button class="tab-btn active" id="menu-tab-hand" onclick="switchTab('hand')">手部凝膠</button>
-        <button class="tab-btn" id="menu-tab-foot" onclick="switchTab('foot')">足部凝膠</button>
-        <button class="tab-btn" id="menu-tab-presson" onclick="switchTab('presson')">穿戴甲</button>
     </div>
 
     <div id="hand-section" class="menu-section active">
@@ -225,23 +221,16 @@
             <button onclick="addService('鏡面/貓眼/亮片/漸層(要卸甲)', 690, 210, 240, 'hand', '基本施作（簡單款 要卸甲）')">貓眼/漸層(要卸) $690</button>
         </div>
         <div class="btn-group" style="grid-template-columns: 1fr;">
-            <button class="btn-promo-style" onclick="addService('當月特惠款(not-remove)', 899, 180, 210, 'hand', '基本施作（特惠款 不卸甲）')">✨ 當月特惠款(不卸) $899 ✨</button>
-            <button class="btn-promo-style" onclick="addService('當月特惠款(remove)', 899, 210, 240, 'hand', '基本施作（特惠款 要卸甲）')">✨ 當月特惠款(要卸) $899 ✨</button>
+            <button class="btn-promo-style" onclick="addService('當月特惠款(不卸甲)', 899, 180, 210, 'hand', '基本施作（特惠款 不卸甲）')">✨ 當月特惠款(不卸) $899 ✨</button>
+            <button class="btn-promo-style" onclick="addService('當月特惠款(要卸甲)', 899, 210, 240, 'hand', '基本施作（特惠款 要卸甲）')">✨ 當月特惠款(要卸) $899 ✨</button>
         </div>
         <div class="slider-container">
-            <div class="slider-title"><span>帶圖款式 (不卸甲)</span></div>
+            <div class="slider-title">帶圖款式</div>
             <div class="scroll-box">
                 <button onclick="addService('帶圖款式(不卸甲)', 690, 210, 240, 'hand', '基本施作（複雜款 不卸甲）')">$690</button>
                 <button onclick="addService('帶圖款式(不卸甲)', 790, 210, 240, 'hand', '基本施作（複雜款 不卸甲）')">$790</button>
                 <button onclick="addService('帶圖款式(不卸甲)', 890, 210, 240, 'hand', '基本施作（複雜款 不卸甲）')">$890</button>
                 <button onclick="addService('帶圖款式(不卸甲)', 990, 210, 240, 'hand', '基本施作（複雜款 不卸甲）')">$990</button>
-            </div>
-            <div class="slider-title" style="margin-top:8px;"><span>帶圖款式 (要卸甲)</span></div>
-            <div class="scroll-box">
-                <button onclick="addService('帶圖款式(要卸甲)', 690, 240, 270, 'hand', '基本施作（複雜款 要卸甲）')">$690</button>
-                <button onclick="addService('帶圖款式(要卸甲)', 790, 240, 270, 'hand', '基本施作（複雜款 要卸甲）')">$790</button>
-                <button onclick="addService('帶圖款式(要卸甲)', 890, 240, 270, 'hand', '基本施作（複雜款 要卸甲）')">$890</button>
-                <button onclick="addService('帶圖款式(要卸甲)', 990, 240, 270, 'hand', '基本施作（複雜款 要卸甲）')">$990</button>
             </div>
         </div>
         <div class="section-title">額外加項目服務</div>
@@ -274,9 +263,9 @@
     <div id="presson-section" class="menu-section">
         <div class="section-title">穿戴甲服務</div>
         <div class="btn-group-3">
-            <button onclick="addService('不分款', 390, 30, 30, 'presson', '穿戴甲不分款')">不分款 $390</button>
-            <button onclick="addService('店內貼', 100, 15, 15, 'presson', '店內貼')">店內貼 $100</button>
-            <button onclick="addService('純貼(自備)', 100, 15, 15, 'presson', '純貼(自備)')">純貼(自備) $100</button>
+            <button onclick="addService('不分款', 390, 0, 0, 'presson', '穿戴甲不分款')">不分款 $390</button>
+            <button onclick="addService('店內貼', 100, 0, 0, 'presson', '店內貼')">店內貼 $100</button>
+            <button onclick="addService('純貼(自備)', 100, 0, 0, 'presson', '純貼(自備)')">純貼(自備) $100</button>
         </div>
     </div>
 
@@ -297,46 +286,40 @@
 <script>
     let currentInput = ''; 
     let receiptData = { hand: {}, foot: {}, presson: {} };
-    let currentTab = 'hand';
-    let currentTimeTab = 'hand';
+    let currentActiveTab = 'hand'; 
     let handTimeItems = [];
     let footTimeItems = [];
+    let pressonItems = [];
 
     const resultDiv = document.getElementById('result'); 
     const historyDiv = document.getElementById('history');
     const copyBtn = document.getElementById('copyBtn');
     const tabNamesMap = { hand: '手部凝膠', foot: '足部凝膠', presson: '穿戴甲' };
 
-    function switchTab(tabName) {
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.menu-section').forEach(sec => sec.classList.remove('active'));
-        document.getElementById('menu-tab-' + tabName).classList.add('active'); 
-        document.getElementById(tabName + '-section').classList.add('active');
-        currentTab = tabName;
-        if(tabName === 'hand' || tabName === 'foot') {
-            switchTimeTab(tabName);
-        }
-    }
-
-    function switchTimeTab(tabName) {
+    function globalSwitch(targetTab) {
+        currentActiveTab = targetTab;
         document.querySelectorAll('.time-tab-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.time-box').forEach(box => box.classList.remove('active'));
-        document.getElementById('time-tab-' + tabName).classList.add('active');
-        document.getElementById('timeBox-' + tabName).classList.add('active');
-        currentTimeTab = tabName;
+        document.getElementById('time-tab-' + targetTab).classList.add('active');
+        document.getElementById('timeBox-' + targetTab).classList.add('active');
+        document.querySelectorAll('.menu-section').forEach(sec => sec.classList.remove('active'));
+        document.getElementById(targetTab + '-section').classList.add('active');
     }
 
     function addService(name, price, minMins, maxMins, type, displayName) {
-        let cleanName = name.replace('(not-remove)', '(不卸甲)').replace('(remove)', '(要卸甲)');
-        if (!receiptData[type][cleanName]) {
-            receiptData[type][cleanName] = { price: price, count: 0 };
+        if (!receiptData[type][name]) {
+            receiptData[type][name] = { price: price, count: 0 };
         }
-        receiptData[type][cleanName].count += 1;
+        receiptData[type][name].count += 1;
+        
         if (type === 'hand') {
             handTimeItems.push({ name: displayName, min: minMins, max: maxMins });
         } else if (type === 'foot') {
             footTimeItems.push({ name: displayName, min: minMins, max: maxMins });
+        } else if (type === 'presson') {
+            pressonItems.push({ name: displayName });
         }
+        
         if (currentInput === '0' || currentInput === '') {
             currentInput = price.toString();
         } else {
@@ -401,13 +384,14 @@
     function formatTimeDisplay() {
         renderSingleTimeBox('hand', handTimeItems);
         renderSingleTimeBox('foot', footTimeItems);
+        renderPressonBox();
     }
 
     function renderSingleTimeBox(type, itemsArr) {
         const targetDiv = document.getElementById('timeDetails-' + type);
         const startTimeIn = document.getElementById('startTime-' + type);
         if (itemsArr.length === 0) {
-            targetDiv.innerHTML = "請先點選項目計算時間...";
+            targetDiv.innerHTML = "請先在下方點選項目...";
             return;
         }
         let html = `<div class="result-title">📋 施作內容</div>`;
@@ -443,6 +427,19 @@
         targetDiv.innerHTML = html;
     }
 
+    function renderPressonBox() {
+        const targetDiv = document.getElementById('timeDetails-presson');
+        if (pressonItems.length === 0) {
+            targetDiv.innerHTML = "請先在下方點選項目...";
+            return;
+        }
+        let html = `<div class="result-title">📋 購買清單</div>`;
+        pressonItems.forEach(item => {
+            html += `<div class="result-item"><span class="result-item-name">✔ ${item.name}</span></div>`;
+        });
+        targetDiv.innerHTML = html;
+    }
+
     function backspaceClick() {
         if (currentInput.endsWith(' ')) {
             currentInput = currentInput.slice(0, -3);
@@ -458,9 +455,11 @@
         historyDiv.innerText = ''; 
         handTimeItems = [];
         footTimeItems = [];
+        pressonItems = [];
         receiptData = { hand: {}, foot: {}, presson: {} };
-        document.getElementById('timeDetails-hand').innerHTML = "請先點選項目計算時間...";
-        document.getElementById('timeDetails-foot').innerHTML = "請先點選項目計算時間...";
+        document.getElementById('timeDetails-hand').innerHTML = "請先在下方點選項目...";
+        document.getElementById('timeDetails-foot').innerHTML = "請先在下方點選項目...";
+        document.getElementById('timeDetails-presson').innerHTML = "請先在下方點選項目...";
         copyBtn.innerText = '📋 複製客人明細';
     }
 
