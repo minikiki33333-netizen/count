@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>小步美學｜專業排班金額計算機</title>
+    <title>小步美學｜專業金額與時間計算機</title>
     <style>
         :root {
             --bg-color: #F7EFE5;
@@ -12,6 +12,8 @@
             --btn-accent: #DAC0A3;
             --text-color: #5C4D43;
             --tab-active: #C19A6B;
+            --time-btn-bg: #F3ECE4;
+            --time-btn-active: #C19A6B;
         }
         
         html, body {
@@ -50,6 +52,7 @@
             color: #8C7A6B;
         }
 
+        /* 頂部時間與計算機螢幕區 */
         .screen {
             background: #ffffff;
             padding: 12px;
@@ -67,8 +70,8 @@
             flex: 1;
             background: #FAF6F0;
             border: 1px solid rgba(193, 154, 107, 0.3);
-            padding: 8px 6px;
-            font-size: 13px;
+            padding: 8px 4px;
+            font-size: 12px;
             border-radius: 10px;
             cursor: pointer;
             color: #7A695C;
@@ -83,12 +86,12 @@
 
         .time-box {
             background: #FAF6F0;
-            padding: 10px 14px;
+            padding: 10px 12px;
             border-radius: 12px;
-            font-size: 14px;
+            font-size: 13px;
             color: #5C4D43;
             text-align: left;
-            line-height: 1.6;
+            line-height: 1.5;
             border: 1px solid rgba(193, 154, 107, 0.25);
             display: none;
         }
@@ -103,165 +106,246 @@
             margin-bottom: 8px;
             font-weight: bold;
             color: var(--tab-active);
-            font-size: 14px;
+            font-size: 13px;
         }
         .start-input-area input {
             border: 1px solid var(--btn-accent);
             border-radius: 6px;
             padding: 2px 5px;
-            font-family: inherit;
             color: var(--text-color);
             background: #fff;
-            font-size: 14px;
-        }
-        .result-title {
-            font-weight: bold;
-            color: #8C7A6B;
-            margin-top: 8px;
-            margin-bottom: 4px;
-            font-size: 14px;
-            border-bottom: 1px dashed rgba(193, 154, 107, 0.3);
-            padding-bottom: 3px;
-        }
-        .result-item {
-            margin-bottom: 6px;
-            padding-left: 4px;
-        }
-        .result-item-name {
-            color: #5C4D43;
-        }
-        .result-item-time {
-            color: #A88153;
-            font-weight: bold;
             font-size: 13px;
-            padding-left: 20px;
+        }
+
+        /* 時間選擇按鈕格子 */
+        .time-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            margin-top: 6px;
+            margin-bottom: 8px;
+        }
+        .time-grid-3 button {
+            background: var(--time-btn-bg);
+            border: 1px solid rgba(193, 154, 107, 0.2);
+            padding: 8px 3px;
+            font-size: 11px;
+            border-radius: 8px;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+        .time-grid-3 button.selected {
+            background: #C19A6B;
+            color: white;
+            border-color: #C19A6B;
+            font-weight: bold;
+        }
+        
+        .time-summary {
+            background: #fff;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px dashed rgba(193, 154, 107, 0.4);
+            margin-top: 5px;
+            font-size: 12px;
         }
         .time-highlight {
             color: #A65252;
             font-weight: bold;
         }
 
-        .history { text-align: right; font-size: 13px; color: #A69485; min-height: 18px; word-break: break-all; }
+        /* 金額螢幕 */
+        .history { text-align: right; font-size: 13px; color: #A69485; min-height: 18px; word-break: break-all; margin-top: 8px; border-top: 1px dashed rgba(92, 77, 67, 0.1); padding-top: 5px;}
         .result { text-align: right; font-size: 28px; font-weight: bold; margin-top: 3px; color: #6F5E53; }
         
-        .menu-section { display: none; flex-direction: column; gap: 10px; margin-top: 5px;}
+        /* 下方服務項目看板區 */
+        .menu-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        .menu-tab-btn {
+            flex: 1;
+            background: #FAF6F0;
+            border: 1px solid rgba(193, 154, 107, 0.2);
+            padding: 8px 4px;
+            font-size: 13px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: #7A695C;
+        }
+        .menu-tab-btn.active {
+            background: var(--btn-accent);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .menu-section { display: none; flex-direction: column; gap: 8px; }
         .menu-section.active { display: flex; }
         
         .section-title {
             font-size: 13px; font-weight: bold; color: #A68A78;
-            border-left: 3px solid var(--tab-active); padding-left: 6px; margin: 6px 0 4px 0;
+            border-left: 3px solid var(--tab-active); padding-left: 6px; margin: 4px 0 2px 0;
         }
-        .btn-group { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .btn-group { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
         .btn-group-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-        .btn-promo-style { background: #E6D5C3; border: 1px dashed var(--tab-active); font-weight: bold; padding: 13px 5px; }
-        .slider-container { background: #FDFBF7; padding: 10px 8px; border-radius: 12px; border: 1px dashed var(--btn-accent); }
-        .slider-title { font-size: 13px; font-weight: bold; color: #A68A78; margin-bottom: 6px; }
-        .scroll-box { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-        .scroll-box button { padding: 10px 0; font-size: 13px; background: #F3ECE4; text-align: center; }
+        .btn-promo-style { background: #E6D5C3; border: 1px dashed var(--tab-active); font-weight: bold; padding: 10px 5px; }
+        
+        .slider-container { background: #FDFBF7; padding: 8px; border-radius: 12px; border: 1px dashed var(--btn-accent); }
+        .slider-title { font-size: 12px; font-weight: bold; color: #A68A78; margin-bottom: 4px; }
+        .scroll-box { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+        .scroll-box button { padding: 8px 0; font-size: 12px; background: #F3ECE4; text-align: center; }
         
         button {
-            background: var(--btn-main); border: none; padding: 12px 6px; border-radius: 12px;
+            background: var(--btn-main); border: none; padding: 10px 4px; border-radius: 12px;
             font-size: 13px; font-weight: 500; color: var(--text-color); cursor: pointer; transition: all 0.1s; -webkit-tap-highlight-color: transparent;
         }
         button:active { transform: scale(0.95); filter: brightness(0.92); }
         
+        /* 計算盤 */
         .calc-pad {
-            border-top: 1px solid rgba(92, 77, 67, 0.1); padding-top: 12px; margin-top: 12px;
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+            border-top: 1px solid rgba(92, 77, 67, 0.1); padding-top: 10px; margin-top: 10px;
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px;
         }
         .btn-operator { background: var(--btn-accent); font-weight: bold; }
         .btn-clear { background: #E8D3D3; color: #A65252; font-weight: bold; }
         .btn-reset-all { background: #D3E2E8; color: #3A6B7F; font-weight: bold; grid-column: span 2; }
         .copy-receipt-btn {
             grid-column: span 4; background: #C19A6B; color: white; font-weight: bold;
-            margin-top: 6px; padding: 13px; border-radius: 14px; font-size: 15px; letter-spacing: 1px;
+            margin-top: 4px; padding: 12px; border-radius: 14px; font-size: 14px; letter-spacing: 1px;
         }
-        .copy-receipt-btn:active { background: #A88153; }
     </style>
 </head>
 <body>
 <div class="calculator">
     <div class="title">小步美學 STEP BY STEP</div>
     
+    <!-- 頂部獨立時間估算看板 -->
     <div class="screen">
         <div class="time-tabs">
-            <button class="time-tab-btn active" id="time-tab-hand" onclick="globalSwitch('hand')">💅 手部服務看板</button>
-            <button class="time-tab-btn" id="time-tab-foot" onclick="globalSwitch('foot')">🦶 足部服務看板</button>
-            <button class="time-tab-btn" id="time-tab-presson" onclick="globalSwitch('presson')">🛍️ 穿戴甲看板</button>
+            <button class="time-tab-btn active" id="t-tab-hand" onclick="switchTimeTab('hand')">💅 手部時間估算</button>
+            <button class="time-tab-btn" id="t-tab-foot" onclick="switchTimeTab('foot')">🦶 足部時間估算</button>
         </div>
         
-        <div class="time-box active" id="timeBox-hand">
+        <!-- 手部時間估算面板 -->
+        <div class="time-box active" id="t-box-hand">
             <div class="start-input-area">
-                ⏰ 開始時間：<input type="time" id="startTime-hand" value="13:30" onchange="formatTimeDisplay()">
+                ⏰ 開始時間：<input type="time" id="startTime-hand" value="13:30" onchange="calcTime('hand')">
             </div>
-            <div id="timeDetails-hand">請先在下方點選項目...</div>
+            <div class="slider-title">1. 選擇基礎款式工時：</div>
+            <div class="time-grid-3">
+                <button id="h-style-1" onclick="toggleStyle('hand', 1, 90, 120, 'h-style-1')">單色不卸甲</button>
+                <button id="h-style-2" onclick="toggleStyle('hand', 2, 120, 150, 'h-style-2')">單色要卸甲</button>
+                <button id="h-style-3" onclick="toggleStyle('hand', 3, 180, 210, 'h-style-3')">簡單不卸甲</button>
+                <button id="h-style-4" onclick="toggleStyle('hand', 4, 210, 240, 'h-style-4')">簡單要卸甲</button>
+                <button id="h-style-5" onclick="toggleStyle('hand', 5, 210, 240, 'h-style-5')">複雜不卸甲</button>
+                <button id="h-style-6" onclick="toggleStyle('hand', 6, 240, 270, 'h-style-6')">複雜要卸甲</button>
+            </div>
+            <div class="slider-title">2. 額外項目加成 (可複選)：</div>
+            <div class="time-grid-3">
+                <button id="h-add-1" onclick="toggleAddon('hand', 'ext1', 15, 'h-add-1')">延甲(單隻)</button>
+                <button id="h-add-2" onclick="toggleAddon('hand', 'ext2', 150, 'h-add-2')">延甲(全手)</button>
+                <button id="h-add-3" onclick="toggleAddon('hand', 'ext3', 60, 'h-add-3')">卸不續(本)</button>
+                <button id="h-add-4" onclick="toggleAddon('hand', 'ext4', 90, 'h-add-4')">卸不續(他)</button>
+                <button id="h-add-5" class="selected" onclick="toggleAddon('hand', 'photo', 10, 'h-add-5')">拍照 10m</button>
+                <button id="h-add-6" class="selected" onclick="toggleAddon('hand', 'discuss', 15, 'h-add-6')">討論 15m</button>
+            </div>
+            <div class="time-summary" id="summary-hand">請勾選上方項目計算工時...</div>
         </div>
         
-        <div class="time-box" id="timeBox-foot">
+        <!-- 足部時間估算面板 -->
+        <div class="time-box" id="t-box-foot">
             <div class="start-input-area">
-                ⏰ 開始時間：<input type="time" id="startTime-foot" value="13:30" onchange="formatTimeDisplay()">
+                ⏰ 開始時間：<input type="time" id="startTime-foot" value="13:30" onchange="calcTime('foot')">
             </div>
-            <div id="timeDetails-foot">請先在下方點選項目...</div>
+            <div class="slider-title">1. 選擇基礎款式工時：</div>
+            <div class="time-grid-3">
+                <button id="f-style-1" onclick="toggleStyle('foot', 1, 90, 120, 'f-style-1')">單色不卸甲</button>
+                <button id="f-style-2" onclick="toggleStyle('foot', 2, 120, 150, 'f-style-2')">單色要卸甲</button>
+                <button id="f-style-3" onclick="toggleStyle('foot', 3, 180, 210, 'f-style-3')">簡單不卸甲</button>
+                <button id="f-style-4" onclick="toggleStyle('foot', 4, 210, 240, 'f-style-4')">簡單要卸甲</button>
+                <button id="f-style-5" onclick="toggleStyle('foot', 5, 210, 240, 'f-style-5')">複雜不卸甲</button>
+                <button id="f-style-6" onclick="toggleStyle('foot', 6, 240, 270, 'f-style-6')">複雜要卸甲</button>
+            </div>
+            <div class="slider-title">2. 額外項目加成 (可複選)：</div>
+            <div class="time-grid-3">
+                <button id="f-add-1" onclick="toggleAddon('foot', 'ext1', 15, 'f-add-1')">延甲(單隻)</button>
+                <button id="f-add-2" onclick="toggleAddon('foot', 'ext2', 150, 'f-add-2')">延甲(全手)</button>
+                <button id="f-add-3" onclick="toggleAddon('foot', 'ext3', 60, 'f-add-3')">卸不續(本)</button>
+                <button id="f-add-4" onclick="toggleAddon('foot', 'ext4', 90, 'f-add-4')">卸不續(他)</button>
+                <button id="f-add-7" onclick="toggleAddon('foot', 'spa', 15, 'f-add-7')">✨去角質 15m</button>
+                <button id="f-add-5" class="selected" onclick="toggleAddon('foot', 'photo', 10, 'f-add-5')">拍照 10m</button>
+                <button id="f-add-6" class="selected" onclick="toggleAddon('foot', 'discuss', 15, 'f-add-6')">討論 15m</button>
+            </div>
+            <div class="time-summary" id="summary-foot">請勾選上方項目計算工時...</div>
         </div>
 
-        <div class="time-box" id="timeBox-presson">
-            <div id="timeDetails-presson">請先在下方點選項目...</div>
-        </div>
-        
+        <!-- 數字計算機原本的顯示區域（純算錢） -->
         <div class="history" id="history"></div>
         <div class="result" id="result">0</div>
     </div>
 
-    <div id="hand-section" class="menu-section active">
+    <!-- 中間：切換下方的價目表看板（純點選加價，不連動時間） -->
+    <div class="menu-tabs">
+        <button class="menu-tab-btn active" id="m-tab-hand" onclick="switchMenuTab('hand')">💅 手部價目</button>
+        <button class="menu-tab-btn" id="m-tab-foot" onclick="switchMenuTab('foot')">🦶 足部價目</button>
+        <button class="menu-tab-btn" id="m-tab-presson" onclick="switchMenuTab('presson')">🛍️ 穿戴甲價目</button>
+    </div>
+
+    <!-- 手部價目區域 -->
+    <div id="m-sec-hand" class="menu-section active">
         <div class="section-title">基礎款式</div>
         <div class="btn-group">
-            <button onclick="addSmartService('手部單色', 490, 90, 120, 120, 150, 'hand', '基本施作（單色）')">單色 $490</button>
-            <button onclick="addSmartService('鏡面/貓眼/亮片/漸層', 690, 180, 210, 210, 240, 'hand', '基本施作（簡單款）')">貓眼/漸層 $690</button>
+            <button onclick="addPrice('手部單色', 490)">單色 $490</button>
+            <button onclick="addPrice('手部貓眼/漸層', 690)">貓眼/漸層 $690</button>
         </div>
         <div class="btn-group" style="grid-template-columns: 1fr;">
-            <button class="btn-promo-style" onclick="addSmartService('當月特惠款', 899, 180, 210, 210, 240, 'hand', '基本施作（特惠款）')">✨ 當月特惠款 $899 ✨</button>
+            <button class="btn-promo-style" onclick="addPrice('當月特惠款', 899)">✨ 當月特惠款 $899 ✨</button>
         </div>
         <div class="slider-container">
             <div class="slider-title">帶圖款式</div>
             <div class="scroll-box">
-                <button onclick="addSmartService('帶圖款式', 690, 210, 240, 210, 240, 'hand', '基本施作（複雜款）')">$690</button>
-                <button onclick="addSmartService('帶圖款式', 790, 210, 240, 210, 240, 'hand', '基本施作（複雜款）')">$790</button>
-                <button onclick="addSmartService('帶圖款式', 890, 210, 240, 210, 240, 'hand', '基本施作（複雜款）')">$890</button>
-                <button onclick="addSmartService('帶圖款式', 990, 210, 240, 210, 240, 'hand', '基本施作（複雜款）')">$990</button>
+                <button onclick="addPrice('手部帶圖款', 690)">$690</button>
+                <button onclick="addPrice('手部帶圖款', 790)">$790</button>
+                <button onclick="addPrice('手部帶圖款', 880)">$890</button>
+                <button onclick="addPrice('手部帶圖款', 990)">$990</button>
             </div>
         </div>
         <div class="section-title">額外加項目服務</div>
         <div class="btn-group-3">
-            <button onclick="addAddon('延甲一隻', 50, 15, 15, 'hand', '延甲一隻')">延甲1隻</button>
-            <button onclick="addAddon('他店續卸', 150, 25, 25, 'hand', '他店續卸', true)">他店續卸</button>
-            <button onclick="addAddon('手純卸甲', 300, 45, 45, 'hand', '手純卸甲', true)">手純卸甲 $300</button>
+            <button onclick="addPrice('延甲1隻', 50)">延甲1隻</button>
+            <button onclick="addPrice('他店續卸', 150)">他店續卸</button>
+            <button onclick="addPrice('手純卸甲', 300)">手純卸甲 $300</button>
         </div>
     </div>
 
-    <div id="foot-section" class="menu-section">
+    <!-- 足部價目區域 -->
+    <div id="m-sec-foot" class="menu-section">
         <div class="section-title">基礎與造型</div>
         <div class="btn-group">
-            <button onclick="addSmartService('足部單色', 590, 90, 120, 120, 150, 'foot', '基本施作（單色）')">單色 $590</button>
-            <button onclick="addSmartService('鏡面/貓眼/亮片/漸層', 790, 180, 210, 210, 240, 'foot', '基本施作（簡單款）')">貓眼/漸層 $790</button>
+            <button onclick="addPrice('足部單色', 590)">單色 $590</button>
+            <button onclick="addPrice('足部貓眼/漸層', 790)">貓眼/漸層 $790</button>
         </div>
         <div class="section-title">額外加項目服務</div>
         <div class="btn-group">
-            <button onclick="addAddon('他店續卸', 250, 25, 25, 'foot', '他店續卸', true)">他店續卸</button>
-            <button onclick="addAddon('足純卸甲', 400, 45, 45, 'foot', '足純卸甲', true)">足純卸甲 $400</button>
+            <button onclick="addPrice('他店續卸', 250)">他店續卸</button>
+            <button onclick="addPrice('足純卸甲', 400)">足純卸甲 $400</button>
         </div>
     </div>
 
-    <div id="presson-section" class="menu-section">
+    <!-- 穿戴甲價目區域 -->
+    <div id="m-sec-presson" class="menu-section">
         <div class="section-title">穿戴甲服務</div>
         <div class="btn-group-3">
-            <button onclick="addServiceDirect('不分款', 390, 'presson', '穿戴甲不分款')">不分款 $390</button>
-            <button onclick="addServiceDirect('店內貼', 100, 'presson', '店內貼')">店內貼 $100</button>
-            <button onclick="addServiceDirect('純貼(自備)', 100, 'presson', '純貼(自備)')">純貼(自備) $100</button>
+            <button onclick="addPrice('穿戴甲不分款', 390)">不分款 $390</button>
+            <button onclick="addPrice('店內貼', 100)">店內貼 $100</button>
+            <button onclick="addPrice('純貼(自備)', 100)">純貼(自備) $100</button>
         </div>
     </div>
 
+    <!-- 底部數字計算盤 -->
     <div class="calc-pad">
-        <button class="btn-reset-all" onclick="clearScreen()">🔄 清除全部</button>
+        <button class="btn-reset-all" onclick="clearAll()">🔄 清除全部</button>
         <button class="btn-clear" onclick="backspaceClick()">刪除</button>
         <button class="btn-operator" onclick="appendOperator('/')">÷</button>
         
@@ -270,116 +354,112 @@
         <button onclick="appendNum('1')">1</button><button onclick="appendNum('2')">2</button><button onclick="appendNum('3')">3</button><button class="btn-operator" onclick="appendOperator('+')">+</button>
         <button style="grid-column: span 2;" onclick="appendNum('0')">0</button><button onclick="appendNum('.')">.</button><button class="btn-operator" onclick="calculate()">=</button>
         
-        <button class="copy-receipt-btn" id="copyBtn" onclick="copyReceipt()">📋 複製客人明細</button>
+        <button class="copy-receipt-btn" id="copyBtn" onclick="copyReceipt()">📋 複製預約明細（純金額）</button>
     </div>
 </div>
 
 <script>
+    // --- 計算機與帳目狀態 ---
     let currentInput = ''; 
-    let receiptData = { hand: {}, foot: {}, presson: {} };
-    let currentActiveTab = 'hand'; 
-    
-    // 儲存已點選的服務
-    let selectedServices = { hand: [], foot: [] };
-    let selectedAddons = { hand: [], foot: [] };
-    let pressonItems = [];
-
+    let receiptItems = []; 
     const resultDiv = document.getElementById('result'); 
     const historyDiv = document.getElementById('history');
     const copyBtn = document.getElementById('copyBtn');
-    const tabNamesMap = { hand: '手部凝膠', foot: '足部凝膠', presson: '穿戴甲' };
 
-    function globalSwitch(targetTab) {
-        currentActiveTab = targetTab;
-        document.querySelectorAll('.time-tab-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.time-box').forEach(box => box.classList.remove('active'));
-        document.getElementById('time-tab-' + targetTab).classList.add('active');
-        document.getElementById('timeBox-' + targetTab).classList.add('active');
-        document.querySelectorAll('.menu-section').forEach(sec => sec.classList.remove('active'));
-        document.getElementById(targetTab + '-section').classList.add('active');
+    // --- 時間估算專用狀態 ---
+    let timeState = {
+        hand: { styleId: null, minMins: 0, maxMins: 0, addons: { photo: 10, discuss: 15 } },
+        foot: { styleId: null, minMins: 0, maxMins: 0, addons: { photo: 10, discuss: 15 } }
+    };
+
+    // 初始化時間計算顯示
+    window.onload = function() {
+        calcTime('hand');
+        calcTime('foot');
+    };
+
+    // 頂部時間分頁切換
+    function switchTimeTab(tab) {
+        document.querySelectorAll('[id^="t-tab-"]').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('[id^="t-box-"]').forEach(box => box.classList.remove('active'));
+        document.getElementById('t-tab-' + tab).classList.add('active');
+        document.getElementById('t-box-' + tab).classList.add('active');
     }
 
-    function addSmartService(name, price, noRemoveMin, noRemoveMax, needRemoveMin, needRemoveMax, type, displayName) {
-        if (!receiptData[type][name]) {
-            receiptData[type][name] = { price: price, count: 0 };
-        }
-        receiptData[type][name].count += 1;
-
-        selectedServices[type].push({
-            name: displayName,
-            noRemoveMin: noRemoveMin,
-            noRemoveMax: noRemoveMax,
-            needRemoveMin: needRemoveMin,
-            needRemoveMax: needRemoveMax
-        });
-
-        pushPriceToInput(price);
+    // 中間價目表分頁切換
+    function switchMenuTab(tab) {
+        document.querySelectorAll('[id^="m-tab-"]').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('[id^="m-sec-"]').forEach(sec => sec.classList.remove('active'));
+        document.getElementById('m-tab-' + tab).classList.add('active');
+        document.getElementById('m-sec-' + tab).classList.add('active');
     }
 
-    function addAddon(name, price, minMins, maxMins, type, displayName, isRemoval = false) {
-        if (!receiptData[type][name]) {
-            receiptData[type][name] = { price: price, count: 0 };
-        }
-        receiptData[type][name].count += 1;
-
-        selectedAddons[type].push({
-            name: displayName,
-            min: minMins,
-            max: maxMins,
-            isRemoval: isRemoval
-        });
-
-        pushPriceToInput(price);
-    }
-
-    function addServiceDirect(name, price, type, displayName) {
-        if (!receiptData[type][name]) {
-            receiptData[type][name] = { price: price, count: 0 };
-        }
-        receiptData[type][name].count += 1;
-        pressonItems.push({ name: displayName });
-        pushPriceToInput(price);
-    }
-
-    function pushPriceToInput(price) {
-        if (currentInput === '0' || currentInput === '') {
-            currentInput = price.toString();
+    // --- 時間估算核心邏輯 ---
+    function toggleStyle(type, id, min, max, btnId) {
+        const state = timeState[type];
+        // 如果點選同一個就取消，否則就替換
+        if (state.styleId === id) {
+            state.styleId = null;
+            state.minMins = 0;
+            state.maxMins = 0;
+            document.getElementById(btnId).classList.remove('selected');
         } else {
-            const lastChar = currentInput.trim().slice(-1);
-            if (!isNaN(lastChar) && lastChar !== '') {
-                currentInput += ' + ' + price;
-            } else {
-                currentInput += ' ' + price;
-            }
+            state.styleId = id;
+            state.minMins = min;
+            state.maxMins = max;
+            // 清除該分頁所有款式的選取狀態
+            document.querySelectorAll(`#t-box-${type} .time-grid-3:nth-of-type(1) button`).forEach(btn => btn.classList.remove('selected'));
+            document.getElementById(btnId).classList.add('selected');
         }
-        updateScreen();
+        calcTime(type);
     }
 
-    function appendNum(val) {
-        if (currentInput === '0' && val !== '.') currentInput = '';
-        currentInput += val;
-        updateScreen();
-    }
-
-    function appendOperator(op) {
-        if (currentInput === '') return;
-        if ([' + ', ' - ', ' * ', ' / '].some(el => currentInput.endsWith(el))) { 
-            currentInput = currentInput.slice(0, -3); 
+    function toggleAddon(type, key, mins, btnId) {
+        const state = timeState[type];
+        if (state.addons[key] !== undefined) {
+            delete state.addons[key];
+            document.getElementById(btnId).classList.remove('selected');
+        } else {
+            state.addons[key] = mins;
+            document.getElementById(btnId).classList.add('selected');
         }
-        currentInput += ' ' + op + ' ';
-        updateScreen();
+        calcTime(type);
     }
 
-    function updateScreen() {
-        resultDiv.innerText = currentInput.replace(/\*/g, '×').replace(/\//g, '÷');
-        formatTimeDisplay();
+    function calcTime(type) {
+        const state = timeState[type];
+        const summaryDiv = document.getElementById('summary-' + type);
+        const startTimeIn = document.getElementById('startTime-' + type);
+        
+        let totalMin = state.minMins;
+        let totalMax = state.maxMins;
+        
+        // 加總外加項目時間
+        for (let key in state.addons) {
+            totalMin += state.addons[key];
+            totalMax += state.addons[key];
+        }
+
+        if (totalMin === 0) {
+            summaryDiv.innerHTML = "請先點選上方的「款式工時」開始估算！";
+            return;
+        }
+
+        let startVal = startTimeIn.value || "13:30";
+        let endMinTime = addMinutesToTime(startVal, totalMin);
+        let endMaxTime = addMinutesToTime(startVal, totalMax);
+
+        summaryDiv.innerHTML = `
+            ⌛ <b>預估總工時：</b>${minsToText(totalMin)} ～ ${minsToText(totalMax)}<br>
+            ⏰ <b>時間軸：</b>${startVal} 開始 ➔ 最快 <span class="time-highlight">${endMinTime}</span> 完工 / 最慢 <span class="time-highlight">${endMaxTime}</span> 完工
+        `;
     }
 
     function minsToText(totalMins) {
         let hrs = Math.floor(totalMins / 60);
         let mins = totalMins % 60;
         if (hrs > 0) {
-            return mins > 0 ? `${hrs}小時${mins}分鐘` : `${hrs}小時`;
+            return mins > 0 ? `${hrs}H ${mins}m` : `${hrs}H`;
         }
         return `${mins}分鐘`;
     }
@@ -394,73 +474,36 @@
         return `${finalHrs.toString().padStart(2, '0')}:${finalMins.toString().padStart(2, '0')}`;
     }
 
-    function formatTimeDisplay() {
-        renderSmartTimeBox('hand');
-        renderSmartTimeBox('foot');
-        renderPressonBox();
+
+    // --- 價目表純算錢邏輯 ---
+    function addPrice(name, price) {
+        receiptItems.push({ name: name, price: price });
+        if (currentInput === '0' || currentInput === '') {
+            currentInput = price.toString();
+        } else {
+            const lastChar = currentInput.trim().slice(-1);
+            if (!isNaN(lastChar) && lastChar !== '') {
+                currentInput += ' + ' + price;
+            } else {
+                currentInput += ' ' + price;
+            }
+        }
+        resultDiv.innerText = currentInput.replace(/\*/g, '×').replace(/\//g, '÷');
     }
 
-    function renderSmartTimeBox(type) {
-        const targetDiv = document.getElementById('timeDetails-' + type);
-        const startTimeIn = document.getElementById('startTime-' + type);
-        
-        if (selectedServices[type].length === 0 && selectedAddons[type].length === 0) {
-            targetDiv.innerHTML = "請先在下方點選項目...";
-            return;
-        }
-
-        const hasRemoval = selectedAddons[type].some(addon => addon.isRemoval === true);
-
-        let html = `<div class="result-title">📋 施作內容</div>`;
-        let totalMinMins = 0;
-        let totalMaxMins = 0;
-
-        selectedServices[type].forEach(item => {
-            let useMin = hasRemoval ? item.needRemoveMin : item.noRemoveMin;
-            let useMax = hasRemoval ? item.needRemoveMax : item.noRemoveMax;
-            totalMinMins += useMin;
-            totalMaxMins += useMax;
-
-            let displayH = (useMin === useMax) ? `${useMin/60}小時` : `${useMin/60}～${useMax/60}H`;
-            html += `<div class="result-item"><span class="result-item-name">✔ ${item.name}</span><br><span class="result-item-time">${displayH}</span></div>`;
-        });
-
-        selectedAddons[type].forEach(addon => {
-            totalMinMins += addon.min;
-            totalMaxMins += addon.max;
-            let displayH = (addon.min === addon.max) ? `${addon.min/60}小時` : `${addon.min/60}～${addon.max/60}H`;
-            html += `<div class="result-item"><span class="result-item-name">✔ ${addon.name}</span><br><span class="result-item-time">${displayH}</span></div>`;
-        });
-
-        html += `<div class="result-item"><span class="result-item-name">✔ 拍照</span><br><span class="result-item-time">10分鐘</span></div>`;
-        html += `<div class="result-item"><span class="result-item-name">✔ 討論款式</span><br><span class="result-item-time">15分鐘</span></div>`;
-        totalMinMins += 25; 
-        totalMaxMins += 25;
-
-        let startVal = startTimeIn.value || "13:30";
-        let endMinTime = addMinutesToTime(startVal, totalMinMins);
-        let endMaxTime = addMinutesToTime(startVal, totalMaxMins);
-
-        html += `<div style="text-align:center; margin:5px 0; color:rgba(193, 154, 107, 0.3);">━━━━━━</div>`;
-        html += `<div class="result-title">⏰ 總工時</div>`;
-        html += `<div style="padding-left:4px; margin-bottom:6px;">最短：${minsToText(totalMinMins)}<br>最長：${minsToText(totalMaxMins)}</div>`;
-        html += `<div class="result-title">🕐 完成時間</div>`;
-        html += `<div style="padding-left:4px;">開始：${startVal}<br>最早：<span class="time-highlight">${endMinTime}</span><br>最晚：<span class="time-highlight">${endMaxTime}</span></div>`;
-        
-        targetDiv.innerHTML = html;
+    function appendNum(val) {
+        if (currentInput === '0' && val !== '.') currentInput = '';
+        currentInput += val;
+        resultDiv.innerText = currentInput.replace(/\*/g, '×').replace(/\//g, '÷');
     }
 
-    function renderPressonBox() {
-        const targetDiv = document.getElementById('timeDetails-presson');
-        if (pressonItems.length === 0) {
-            targetDiv.innerHTML = "請先在下方點選項目...";
-            return;
+    function appendOperator(op) {
+        if (currentInput === '') return;
+        if ([' + ', ' - ', ' * ', ' / '].some(el => currentInput.endsWith(el))) { 
+            currentInput = currentInput.slice(0, -3); 
         }
-        let html = `<div class="result-title">📋 購買清單</div>`;
-        pressonItems.forEach(item => {
-            html += `<div class="result-item"><span class="result-item-name">✔ ${item.name}</span></div>`;
-        });
-        targetDiv.innerHTML = html;
+        currentInput += ' ' + op + ' ';
+        resultDiv.innerText = currentInput.replace(/\*/g, '×').replace(/\//g, '÷');
     }
 
     function backspaceClick() {
@@ -469,21 +512,7 @@
         } else if (currentInput.length > 0) {
             currentInput = currentInput.slice(0, -1);
         }
-        updateScreen();
-    }
-
-    function clearScreen() { 
-        currentInput = ''; 
-        resultDiv.innerText = '0'; 
-        historyDiv.innerText = ''; 
-        selectedServices = { hand: [], foot: [] };
-        selectedAddons = { hand: [], foot: [] };
-        pressonItems = [];
-        receiptData = { hand: {}, foot: {}, presson: {} };
-        document.getElementById('timeDetails-hand').innerHTML = "請先在下方點選項目...";
-        document.getElementById('timeDetails-foot').innerHTML = "請先在下方點選項目...";
-        document.getElementById('timeDetails-presson').innerHTML = "請先在下方點選項目...";
-        copyBtn.innerText = '📋 複製客人明細';
+        resultDiv.innerText = currentInput === '' ? '0' : currentInput.replace(/\*/g, '×').replace(/\//g, '÷');
     }
 
     function calculate() {
@@ -501,34 +530,47 @@
         }
     }
 
+    function clearAll() { 
+        currentInput = ''; 
+        receiptItems = [];
+        resultDiv.innerText = '0'; 
+        historyDiv.innerText = ''; 
+        copyBtn.innerText = '📋 複製預約明細（純金額）';
+        
+        // 重設時間按鈕與狀態
+        document.querySelectorAll('.time-grid-3 button').forEach(btn => btn.classList.remove('selected'));
+        timeState = {
+            hand: { styleId: null, minMins: 0, maxMins: 0, addons: { photo: 10, discuss: 15 } },
+            foot: { styleId: null, minMins: 0, maxMins: 0, addons: { photo: 10, discuss: 15 } }
+        };
+        // 預設重新勾選拍照跟討論
+        document.getElementById('h-add-5').classList.add('selected');
+        document.getElementById('h-add-6').classList.add('selected');
+        document.getElementById('f-add-5').classList.add('selected');
+        document.getElementById('f-add-6').classList.add('selected');
+        calcTime('hand');
+        calcTime('foot');
+    }
+
     function copyReceipt() {
         calculate();
-        const total = resultDiv.innerText;
-        let hasData = false;
-        let text = '✨ 【小步美學】 ✨\n';
-        text += '────────────────\n\n';
-        for (let type in receiptData) {
-            if (Object.keys(receiptData[type]).length > 0) {
-                hasData = true;
-                text += `∞ ${tabNamesMap[type]}\n`;
-                for (let name in receiptData[type]) {
-                    let item = receiptData[type][name];
-                    text += `  ▫️ ${name} x${item.count}: $${item.price * item.count}\n`;
-                }
-                text += '\n';
-            }
-        }
-        if (!hasData) {
-            alert('請先點選服務項目再複製喔！');
+        if (receiptItems.length === 0) {
+            alert('請先點選下方價目表項目再複製喔！');
             return;
         }
+        let text = '✨ 【小步美學 預約明細】 ✨\n';
         text += '────────────────\n';
-        text += `💰 總計: $${total}`;
+        receiptItems.forEach(item => {
+            text += ` ▫️ ${item.name}: $${item.price}\n`;
+        });
+        text += '────────────────\n';
+        text += `💰 總計金額: $${resultDiv.innerText}`;
+        
         navigator.clipboard.writeText(text).then(() => {
             copyBtn.innerText = '✅ 已複製明細！';
-            setTimeout(() => { copyBtn.innerText = '📋 複製客人明細'; }, 2000);
+            setTimeout(() => { copyBtn.innerText = '📋 複製預約明細（純金額）'; }, 2000);
         }).catch(err => {
-            alert('複製失敗，請手動全選複製');
+            alert('複製失敗，請手動複製');
         });
     }
 </script>
