@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>美業小清新計算機</title>
+    <style>
+        :root {
+            --bg-color: #FDFBF7;
+            --panel-color: #F4EFEA;
+            --btn-main: #E6DCD2;
+            --btn-accent: #D9C3B0;
+            --text-color: #5C4D43;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'PingFang TC', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .calculator {
+            background: var(--panel-color);
+            padding: 20px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(92, 77, 67, 0.08);
+            width: 100%;
+            max-width: 340px;
+        }
+        .screen {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 16px;
+            text-align: right;
+            margin-bottom: 15px;
+            border: 1px solid rgba(92, 77, 67, 0.1);
+        }
+        .history { font-size: 13px; color: #A69485; min-height: 18px; word-break: break-all; }
+        .result { font-size: 34px; font-weight: bold; margin-top: 5px; word-break: break-all; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        button {
+            background: var(--btn-main);
+            border: none;
+            padding: 18px 10px;
+            border-radius: 14px;
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.1s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        button:active { transform: scale(0.92); filter: brightness(0.92); }
+        .btn-operator { background: var(--btn-accent); font-weight: bold; }
+        .btn-clear { background: #E8D3D3; color: #A65252; }
+        .quick-section {
+            grid-column: span 4;
+            display: flex;
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+        .quick-section button { flex: 1; padding: 12px 5px; font-size: 14px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="calculator">
+    <div class="screen">
+        <div class="history" id="history"></div>
+        <div class="result" id="result">0</div>
+    </div>
+    
+    <div class="grid">
+        <div class="quick-section">
+            <button onclick="appendValue('1000')">單色 1k</button>
+            <button onclick="appendValue('1200')">貓眼 1.2k</button>
+            <button onclick="appendValue('200')">卸甲 200</button>
+        </div>
+
+        <button class="btn-clear" onclick="clearScreen()">AC</button>
+        <button class="btn-operator" onclick="appendOperator('/')">÷</button>
+        <button class="btn-operator" onclick="appendOperator('*')">×</button>
+        <button class="btn-operator" onclick="appendOperator('-')">-</button>
+        
+        <button onclick="appendValue('7')">7</button>
+        <button onclick="appendValue('8')">8</button>
+        <button onclick="appendValue('9')">9</button>
+        <button class="btn-operator" onclick="appendOperator('+')">+</button>
+        
+        <button onclick="appendValue('4')">4</button>
+        <button onclick="appendValue('5')">5</button>
+        <button onclick="appendValue('6')">6</button>
+        <button class="btn-operator" style="grid-row: span 2; height: 100%;" onclick="calculate()">=</button>
+        
+        <button onclick="appendValue('1')">1</button>
+        <button onclick="appendValue('2')">2</button>
+        <button onclick="appendValue('3')">3</button>
+        
+        <button style="grid-column: span 2;" onclick="appendValue('0')">0</button>
+        <button onclick="appendValue('.')">.</button>
+    </div>
+</div>
+
+<script>
+    let currentInput = '';
+    const resultDiv = document.getElementById('result');
+    const historyDiv = document.getElementById('history');
+
+    function appendValue(val) {
+        if(currentInput === '0' && val !== '.') currentInput = '';
+        currentInput += val;
+        resultDiv.innerText = currentInput;
+    }
+
+    function appendOperator(op) {
+        if(currentInput === '') return;
+        // 如果最後一個字元是運算子，先拔掉換成新的
+        if([' + ', ' - ', ' * ', ' / '].some(el => currentInput.endsWith(el))) {
+            currentInput = currentInput.slice(0, -3);
+        }
+        currentInput += ' ' + op + ' ';
+        resultDiv.innerText = currentInput;
+    }
+
+    function clearScreen() {
+        currentInput = '';
+        resultDiv.innerText = '0';
+        historyDiv.innerText = '';
+    }
+
+    function calculate() {
+        try {
+            if(currentInput === '') return;
+            let displayInput = currentInput.replace(/\*/g, '×').replace(/\//g, '÷');
+            historyDiv.innerText = displayInput + ' =';
+            let res = eval(currentInput);
+            // 處理浮點數誤差，最多留到小數點後兩位
+            res = Math.round(res * 100) / 100;
+            resultDiv.innerText = res;
+            currentInput = res.toString();
+        } catch (error) {
+            resultDiv.innerText = '錯誤';
+            currentInput = '';
+        }
+    }
+</script>
+
+</body>
+</html>
