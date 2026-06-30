@@ -297,7 +297,7 @@
         <div class="section-title">基礎款式</div>
         <div class="btn-group">
             <button onclick="addPrice('手部單色', 490)">單色 $490</button>
-            <button onclick="addPrice('手部貓眼/漸層', 690)">貓眼/漸層 $690</button>
+            <button onclick="addPrice('手部鏡面/貓眼/亮片/漸層', 690)">鏡面/貓眼/亮片/漸層 $690</button>
         </div>
         <div class="btn-group" style="grid-template-columns: 1fr;">
             <button class="btn-promo-style" onclick="addPrice('當月特惠款', 899)">✨ 當月特惠款 $899 ✨</button>
@@ -324,7 +324,7 @@
         <div class="section-title">基礎與造型</div>
         <div class="btn-group">
             <button onclick="addPrice('足部單色', 590)">單色 $590</button>
-            <button onclick="addPrice('足部貓眼/漸層', 790)">貓眼/漸層 $790</button>
+            <button onclick="addPrice('足部鏡面/貓眼/亮片/漸層', 790)">鏡面/貓眼/亮片/漸層 $790</button>
         </div>
         <div class="section-title">額外加項目服務</div>
         <div class="btn-group">
@@ -397,7 +397,6 @@
     // --- 時間估算核心邏輯 ---
     function toggleStyle(type, id, min, max, btnId) {
         const state = timeState[type];
-        // 如果點選同一個就取消，否則就替換
         if (state.styleId === id) {
             state.styleId = null;
             state.minMins = 0;
@@ -407,7 +406,6 @@
             state.styleId = id;
             state.minMins = min;
             state.maxMins = max;
-            // 清除該分頁所有款式的選取狀態
             document.querySelectorAll(`#t-box-${type} .time-grid-3:nth-of-type(1) button`).forEach(btn => btn.classList.remove('selected'));
             document.getElementById(btnId).classList.add('selected');
         }
@@ -434,7 +432,6 @@
         let totalMin = state.minMins;
         let totalMax = state.maxMins;
         
-        // 加總外加項目時間
         for (let key in state.addons) {
             totalMin += state.addons[key];
             totalMax += state.addons[key];
@@ -473,7 +470,6 @@
         let finalMins = total % 60;
         return `${finalHrs.toString().padStart(2, '0')}:${finalMins.toString().padStart(2, '0')}`;
     }
-
 
     // --- 價目表純算錢邏輯 ---
     function addPrice(name, price) {
@@ -537,13 +533,11 @@
         historyDiv.innerText = ''; 
         copyBtn.innerText = '📋 複製預約明細（純金額）';
         
-        // 重設時間按鈕與狀態
         document.querySelectorAll('.time-grid-3 button').forEach(btn => btn.classList.remove('selected'));
         timeState = {
             hand: { styleId: null, minMins: 0, maxMins: 0, addons: { photo: 10, discuss: 15 } },
             foot: { styleId: null, minMins: 0, maxMins: 0, addons: { photo: 10, discuss: 15 } }
         };
-        // 預設重新勾選拍照跟討論
         document.getElementById('h-add-5').classList.add('selected');
         document.getElementById('h-add-6').classList.add('selected');
         document.getElementById('f-add-5').classList.add('selected');
