@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>小步美學｜排班時間金額計算機</title>
+    <title>小步美學｜專業排班金額計算機</title>
     <style>
         :root {
             --bg-color: #F7EFE5;
@@ -49,24 +49,55 @@
             margin-bottom: 15px;
             border: 1px solid rgba(92, 77, 67, 0.1);
         }
+        
+        /* 時間看板切換標籤 */
+        .time-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 8px;
+        }
+        .time-tab-btn {
+            flex: 1;
+            background: #FAF6F0;
+            border: 1px solid rgba(193, 154, 107, 0.3);
+            padding: 6px;
+            font-size: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #7A695C;
+            font-weight: bold;
+        }
+        .time-tab-btn.active {
+            background: #EADBC8;
+            border-color: #C19A6B;
+            color: var(--text-color);
+        }
+
+        /* 時間看板主體 */
         .time-box {
             background: #FAF6F0;
-            padding: 10px;
-            border-radius: 10px;
-            font-size: 13px;
-            color: #7A695C;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            color: #5C4D43;
             margin-bottom: 10px;
             text-align: left;
-            line-height: 1.5;
-            border: 1px solid rgba(193, 154, 107, 0.2);
+            line-height: 1.6;
+            border: 1px solid rgba(193, 154, 107, 0.25);
+            display: none;
         }
+        .time-box.active {
+            display: block;
+        }
+
         .start-input-area {
             display: flex;
             align-items: center;
             gap: 5px;
-            margin-bottom: 5px;
+            margin-bottom: 12px;
             font-weight: bold;
             color: var(--tab-active);
+            font-size: 14px;
         }
         .start-input-area input {
             border: 1px solid var(--btn-accent);
@@ -75,9 +106,39 @@
             font-family: inherit;
             color: var(--text-color);
             background: #fff;
+            font-size: 14px;
         }
+        .result-title {
+            font-weight: bold;
+            color: #8C7A6B;
+            margin-top: 10px;
+            margin-bottom: 6px;
+            font-size: 14px;
+            border-bottom: 1px dashed rgba(193, 154, 107, 0.3);
+            padding-bottom: 3px;
+        }
+        .result-item {
+            margin-bottom: 8px;
+            padding-left: 4px;
+        }
+        .result-item-name {
+            color: #5C4D43;
+        }
+        .result-item-time {
+            color: #A88153;
+            font-weight: bold;
+            font-size: 13px;
+            padding-left: 20px;
+        }
+        .time-highlight {
+            color: #A65252;
+            font-weight: bold;
+        }
+
         .history { text-align: right; font-size: 13px; color: #A69485; min-height: 18px; word-break: break-all; }
         .result { text-align: right; font-size: 32px; font-weight: bold; margin-top: 5px; color: #6F5E53; }
+        
+        /* 款式切換分頁 */
         .tabs { display: flex; gap: 5px; margin-bottom: 15px; }
         .tab-btn {
             flex: 1; background: #F0E6DB; border: none; padding: 10px;
@@ -102,12 +163,15 @@
             font-size: 14px; font-weight: 500; color: var(--text-color); cursor: pointer; transition: all 0.1s; -webkit-tap-highlight-color: transparent;
         }
         button:active { transform: scale(0.95); filter: brightness(0.92); }
+        
+        /* 計算盤 */
         .calc-pad {
             margin-top: 15px; border-top: 1px solid rgba(92, 77, 67, 0.1); padding-top: 15px;
             display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
         }
         .btn-operator { background: var(--btn-accent); font-weight: bold; }
-        .btn-clear { background: #E8D3D3; color: #A65252; }
+        .btn-clear { background: #E8D3D3; color: #A65252; font-weight: bold; }
+        .btn-reset-all { background: #D3E2E8; color: #3A6B7F; font-weight: bold; grid-column: span 2; }
         .copy-receipt-btn {
             grid-column: span 4; background: #C19A6B; color: white; font-weight: bold;
             margin-top: 10px; padding: 14px; border-radius: 14px; font-size: 16px; letter-spacing: 1px;
@@ -119,24 +183,35 @@
 <div class="calculator">
     <div class="title">小步美學 STEP BY STEP</div>
     <div class="screen">
-        <!-- 專屬時間排班看板 -->
-        <div class="time-box" id="timeBox">
-            <div class="start-input-area">
-                ⏰ 開始時間：<input type="time" id="startTime" value="13:30" onchange="formatTimeDisplay()">
-            </div>
-            <div id="timeDetails">請先點選項目計算時間...</div>
+        <div class="time-tabs">
+            <button class="time-tab-btn active" id="time-tab-hand" onclick="switchTimeTab('hand')">💅 手部工時看板</button>
+            <button class="time-tab-btn" id="time-tab-foot" onclick="switchTimeTab('foot')">🦶 足部工時看板</button>
         </div>
+
+        <div class="time-box active" id="timeBox-hand">
+            <div class="start-input-area">
+                ⏰ 開始時間：<input type="time" id="startTime-hand" value="13:30" onchange="formatTimeDisplay()">
+            </div>
+            <div id="timeDetails-hand">請先點選項目計算時間...</div>
+        </div>
+
+        <div class="time-box" id="timeBox-foot">
+            <div class="start-input-area">
+                ⏰ 開始時間：<input type="time" id="startTime-foot" value="13:30" onchange="formatTimeDisplay()">
+            </div>
+            <div id="timeDetails-foot">請先點選項目計算時間...</div>
+        </div>
+
         <div class="history" id="history"></div>
         <div class="result" id="result">0</div>
     </div>
     
     <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('hand')">手部凝膠</button>
-        <button class="tab-btn" onclick="switchTab('foot')">足部凝膠</button>
-        <button class="tab-btn" onclick="switchTab('presson')">穿戴甲</button>
+        <button class="tab-btn active" id="menu-tab-hand" onclick="switchTab('hand')">手部凝膠</button>
+        <button class="tab-btn" id="menu-tab-foot" onclick="switchTab('foot')">足部凝膠</button>
+        <button class="tab-btn" id="menu-tab-presson" onclick="switchTab('presson')">穿戴甲</button>
     </div>
 
-    <!-- 手部 section -->
     <div id="hand-section" class="menu-section active">
         <div class="section-title">基礎款式 (已分配不卸/要卸時長)</div>
         <div class="btn-group">
@@ -176,7 +251,6 @@
         </div>
     </div>
 
-    <!-- 足部 section -->
     <div id="foot-section" class="menu-section">
         <div class="section-title">基礎與造型</div>
         <div class="btn-group">
@@ -193,7 +267,6 @@
         </div>
     </div>
 
-    <!-- 穿戴甲 section -->
     <div id="presson-section" class="menu-section">
         <div class="section-title">穿戴甲服務</div>
         <div class="btn-group-3">
@@ -203,13 +276,16 @@
         </div>
     </div>
 
-    <!-- 計算盤 -->
     <div class="calc-pad">
-        <button class="btn-clear" onclick="clearScreen()">AC</button><button class="btn-operator" onclick="appendOperator('/')">÷</button><button class="btn-operator" onclick="appendOperator('*')">×</button><button class="btn-operator" onclick="appendOperator('-')">-</button>
-        <button onclick="appendNum('7')">7</button><button onclick="appendNum('8')">8</button><button onclick="appendNum('9')">9</button><button class="btn-operator" onclick="appendOperator('+')">+</button>
-        <button onclick="appendNum('4')">4</button><button onclick="appendNum('5')">5</button><button onclick="appendNum('6')">6</button><button class="btn-operator" style="grid-row: span 2; height: 100%;" onclick="calculate()">=</button>
-        <button onclick="appendNum('1')">1</button><button onclick="appendNum('2')">2</button><button onclick="appendNum('3')">3</button>
-        <button style="grid-column: span 2;" onclick="appendNum('0')">0</button><button onclick="appendNum('.')">.</button>
+        <button class="btn-reset-all" onclick="clearScreen()">🔄 清除全部</button>
+        <button class="btn-clear" onclick="backspaceClick()">刪除</button>
+        <button class="btn-operator" onclick="appendOperator('/')">÷</button>
+        
+        <button onclick="appendNum('7')">7</button><button onclick="appendNum('8')">8</button><button onclick="appendNum('9')">9</button><button class="btn-operator" onclick="appendOperator('*')">×</button>
+        <button onclick="appendNum('4')">4</button><button onclick="appendNum('5')">5</button><button onclick="appendNum('6')">6</button><button class="btn-operator" onclick="appendOperator('-')">-</button>
+        <button onclick="appendNum('1')">1</button><button onclick="appendNum('2')">2</button><button onclick="appendNum('3')">3</button><button class="btn-operator" onclick="appendOperator('+')">+</button>
+        <button style="grid-column: span 2;" onclick="appendNum('0')">0</button><button onclick="appendNum('.')">.</button><button class="btn-operator" onclick="calculate()">=</button>
+        
         <button class="copy-receipt-btn" id="copyBtn" onclick="copyReceipt()">📋 複製客人明細</button>
     </div>
 </div>
@@ -218,24 +294,37 @@
     let currentInput = ''; 
     let receiptData = { hand: {}, foot: {}, presson: {} };
     let currentTab = 'hand';
+    let currentTimeTab = 'hand'; // 當前看哪個時間分頁
     
-    // 用於追蹤點選項目的時間陣列
-    let selectedTimeItems = [];
+    // 將時間項目分開存放
+    let handTimeItems = [];
+    let footTimeItems = [];
 
     const resultDiv = document.getElementById('result'); 
     const historyDiv = document.getElementById('history');
-    const timeDetailsDiv = document.getElementById('timeDetails');
     const copyBtn = document.getElementById('copyBtn');
-    const startTimeInput = document.getElementById('startTime');
-
+    
     const tabNamesMap = { hand: '手部凝膠', foot: '足部凝膠', presson: '穿戴甲' };
 
     function switchTab(tabName) {
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.menu-section').forEach(sec => sec.classList.remove('active'));
-        window.event.target.classList.add('active'); 
+        document.getElementById('menu-tab-' + tabName).classList.add('active'); 
         document.getElementById(tabName + '-section').classList.add('active');
         currentTab = tabName;
+        
+        // 聰明聯動：點下面價錢分頁時，如果不是穿戴甲，自動幫忙切換上方對應的時間看板
+        if(tabName === 'hand' || tabName === 'foot') {
+            switchTimeTab(tabName);
+        }
+    }
+
+    function switchTimeTab(tabName) {
+        document.querySelectorAll('.time-tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.time-box').forEach(box => box.classList.remove('active'));
+        document.getElementById('time-tab-' + tabName).classList.add('active');
+        document.getElementById('timeBox-' + tabName).classList.add('active');
+        currentTimeTab = tabName;
     }
 
     function addService(name, price, minMins, maxMins, type, displayName) {
@@ -244,8 +333,12 @@
         }
         receiptData[type][name].count += 1;
         
-        // 紀錄時間明細
-        selectedTimeItems.push({ name: displayName, min: minMins, max: maxMins });
+        // 根據項目種類，塞進各自的時間陣列
+        if (type === 'hand') {
+            handTimeItems.push({ name: displayName, min: minMins, max: maxMins });
+        } else if (type === 'foot') {
+            footTimeItems.push({ name: displayName, min: minMins, max: maxMins });
+        }
 
         if (currentInput === '0' || currentInput === '') {
             currentInput = price.toString();
@@ -284,9 +377,18 @@
         let hrs = Math.floor(totalMins / 60);
         let mins = totalMins % 60;
         if (hrs > 0) {
-            return mins > 0 ? `${hrs} 小時 ${mins} 分` : `${hrs} 小時`;
+            return mins > 0 ? `${hrs}小時${mins}分鐘` : `${hrs}小時`;
         }
-        return `${mins} 分鐘`;
+        return `${mins}分鐘`;
+    }
+
+    function minsToTextFormat(item) {
+        if (item.min === item.max) {
+            let hrs = item.min / 60;
+            return hrs % 1 === 0 ? `${hrs}小時` : `${hrs}H`;
+        } else {
+            return `${item.min/60}～${item.max/60}H`;
+        }
     }
 
     function addMinutesToTime(timeStr, minsToAdd) {
@@ -302,56 +404,81 @@
     }
 
     function formatTimeDisplay() {
-        if (selectedTimeItems.length === 0) {
-            timeDetailsDiv.innerHTML = "請先點選項目計算時間...";
+        // 渲染手部時間看板
+        renderSingleTimeBox('hand', handTimeItems);
+        // 渲染足部時間看板
+        renderSingleTimeBox('foot', footTimeItems);
+    }
+
+    function renderSingleTimeBox(type, itemsArr) {
+        const targetDiv = document.getElementById('timeDetails-' + type);
+        const startTimeIn = document.getElementById('startTime-' + type);
+        
+        if (itemsArr.length === 0) {
+            targetDiv.innerHTML = "請先點選項目計算時間...";
             return;
         }
 
-        let html = "";
+        let html = `<div class="result-title">📋 施作內容</div>`;
         let totalMinMins = 0;
         let totalMaxMins = 0;
 
-        // 1. 輸出各個被點選項目的時間
-        selectedTimeItems.forEach(item => {
+        itemsArr.forEach(item => {
             totalMinMins += item.min;
             totalMaxMins += item.max;
-            if (item.min === item.max) {
-                html += `▫️ ${item.name}<br><strong style="color:#A88153;">${minsToText(item.min)}</strong><br>`;
-            } else {
-                html += `▫️ ${item.name}<br><strong style="color:#A88153;">${item.min/60}～${item.max/60} 小時</strong><br>`;
-            }
+            html += `<div class="result-item">`;
+            html += `<span class="result-item-name">✔ ${item.name}</span><br>`;
+            html += `<span class="result-item-time">${minsToTextFormat(item)}</span>`;
+            html += `</div>`;
         });
 
-        // 2. 固定加上拍照與討論
-        html += `▫️ 拍照<br><strong style="color:#A88153;">10 分鐘</strong><br>`;
-        html += `▫️ 討論款式<br><strong style="color:#A88153;">15 分鐘</strong><br>`;
+        // 固定加入拍照與討論款式
+        html += `<div class="result-item"><span class="result-item-name">✔ 拍照</span><br><span class="result-item-time">10分鐘</span></div>`;
+        html += `<div class="result-item"><span class="result-item-name">✔ 討論款式</span><br><span class="result-item-time">15分鐘</span></div>`;
         
-        totalMinMins += 25; // 加 10 + 15
+        totalMinMins += 25; 
         totalMaxMins += 25;
 
-        // 3. 計算總時間與完成時間
-        let startVal = startTimeInput.value || "13:30";
+        let startVal = startTimeIn.value || "13:30";
         let endMinTime = addMinutesToTime(startVal, totalMinMins);
         let endMaxTime = addMinutesToTime(startVal, totalMaxMins);
 
-        html += `<hr style="border:0; border-top:1px dashed #C19A6B; margin:8px 0;">`;
-        html += `<strong>【總時間】</strong><br>`;
-        html += `⏱️ 最短：${minsToText(totalMinMins)}<br>`;
-        html += `⏱️ 最長：${minsToText(totalMaxMins)}<br>`;
-        html += `🏁 開始：${startVal}<br>`;
-        html += `✨ 最早完成：<span style="color:#A65252; font-weight:bold;">${endMinTime}</span><br>`;
-        html += `✨ 最晚完成：<span style="color:#A65252; font-weight:bold;">${endMaxTime}</span>`;
+        html += `<div style="text-align:center; margin:10px 0; color:rgba(193, 154, 107, 0.5);">━━━━━━━━━━</div>`;
+        
+        html += `<div class="result-title">⏰ 總工時</div>`;
+        html += `<div style="padding-left:4px; margin-bottom:10px;">`;
+        html += `最短：${minsToText(totalMinMins)}<br>`;
+        html += `最長：${minsToText(totalMaxMins)}`;
+        html += `</div>`;
 
-        timeDetailsDiv.innerHTML = html;
+        html += `<div class="result-title">🕐 完成時間</div>`;
+        html += `<div style="padding-left:4px;">`;
+        html += `開始：${startVal}<br>`;
+        html += `最早：<span class="time-highlight">${endMinTime}</span><br>`;
+        html += `最晚：<span class="time-highlight">${endMaxTime}</span>`;
+        html += `</div>`;
+
+        targetDiv.innerHTML = html;
+    }
+
+    function backspaceClick() {
+        if (currentInput.endsWith(' ')) {
+            currentInput = currentInput.slice(0, -3);
+        } else if (currentInput.length > 0) {
+            currentInput = currentInput.slice(0, -1);
+        }
+        updateScreen();
     }
 
     function clearScreen() { 
         currentInput = ''; 
         resultDiv.innerText = '0'; 
         historyDiv.innerText = ''; 
-        selectedTimeItems = [];
+        handTimeItems = [];
+        footTimeItems = [];
         receiptData = { hand: {}, foot: {}, presson: {} };
-        timeDetailsDiv.innerHTML = "請先點選項目計算時間...";
+        document.getElementById('timeDetails-hand').innerHTML = "請先點選項目計算時間...";
+        document.getElementById('timeDetails-foot').innerHTML = "請先點選項目計算時間...";
         copyBtn.innerText = '📋 複製客人明細';
     }
 
