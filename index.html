@@ -12,6 +12,7 @@
             --btn-accent: #DAC0A3;
             --text-color: #5C4D43;
             --tab-active: #C19A6B;
+            --btn-promo: #E8D8C8;
         }
         body {
             background-color: var(--bg-color);
@@ -66,6 +67,7 @@
         }
         .btn-group { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
         .btn-group-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+        .btn-promo-style { background: #E6D5C3; border: 1px dashed var(--tab-active); font-weight: bold; }
         .slider-container { background: #FDFBF7; padding: 8px; border-radius: 12px; border: 1px dashed var(--btn-accent); }
         .slider-title { font-size: 12px; margin-bottom: 6px; display: flex; justify-content: space-between; }
         .scroll-box { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
@@ -106,6 +108,9 @@
             <button onclick="addItem('手部單色', 490, 'hand')">手部單色 $490</button>
             <button onclick="addItem('鏡面/貓眼/亮片/漸層', 690, 'hand')">鏡面/貓眼/亮片/漸層 $690</button>
         </div>
+        <div class="btn-group" style="grid-template-columns: 1fr;">
+            <button class="btn-promo-style" onclick="addItem('當月特惠款', 899, 'hand')">✨ 當月特惠款 $899 ✨</button>
+        </div>
         <div class="slider-container">
             <div class="slider-title"><span>帶圖款式 (金額選擇)</span><span style="color:var(--tab-active); font-weight:bold;">$690 - $990</span></div>
             <div class="scroll-box">
@@ -127,15 +132,6 @@
         <div class="btn-group">
             <button onclick="addItem('足部單色', 590, 'foot')">足部單色 $590</button>
             <button onclick="addItem('鏡面/貓眼/亮片/漸層', 790, 'foot')">鏡面/貓眼/亮片/漸層 $790</button>
-        </div>
-        <div class="slider-container">
-            <div class="slider-title"><span>帶圖款式 (金額選擇)</span><span style="color:var(--tab-active); font-weight:bold;">$690 - $990</span></div>
-            <div class="scroll-box">
-                <button onclick="addItem('帶圖款式', 690, 'foot')">$690</button>
-                <button onclick="addItem('帶圖款式', 790, 'foot')">$790</button>
-                <button onclick="addItem('帶圖款式', 890, 'foot')">$890</button>
-                <button onclick="addItem('帶圖款式', 990, 'foot')">$990</button>
-            </div>
         </div>
         <div class="section-title">卸甲服務 (足部無延甲)</div>
         <div class="btn-group">
