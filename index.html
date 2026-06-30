@@ -236,9 +236,8 @@
             </div>
         </div>
         <div class="section-title">額外加項目服務</div>
-        <div class="btn-group-3">
+        <div class="btn-group">
             <button onclick="addAddon('延甲一隻', 50, 15, 15, 'hand', '延甲一隻')">延甲1隻</button>
-            <button onclick="addAddon('全手延甲', 500, 150, 150, 'hand', '全手延甲')">全手延甲</button>
             <button onclick="addAddon('他店續卸', 150, 25, 25, 'hand', '他店續卸', true)">他店續卸</button>
         </div>
         <div class="btn-group" style="margin-top: 5px;">
@@ -256,7 +255,7 @@
         <div class="section-title">額外加項目服務</div>
         <div class="btn-group-3">
             <button onclick="addAddon('足部去角質', 0, 15, 15, 'foot', '足部去角質')">去角質</button>
-            <button onclick="addAddon('他店續卸', 250, 25, 25, 'foot', '他店續卸', true)">他店續卸</button>
+            <button onclick="addAddon(' his店續卸', 250, 25, 25, 'foot', '他店續卸', true)">他店續卸</button>
             <button onclick="addAddon('足純卸甲', 400, 45, 45, 'foot', '足純卸甲', true)">足純卸甲 $400</button>
         </div>
     </div>
@@ -311,7 +310,6 @@
         document.getElementById(targetTab + '-section').classList.add('active');
     }
 
-    // 點選主要款式（無任何卸甲提示標籤）
     function addSmartService(name, price, noRemoveMin, noRemoveMax, needRemoveMin, needRemoveMax, type, displayName) {
         if (!receiptData[type][name]) {
             receiptData[type][name] = { price: price, count: 0 };
@@ -329,7 +327,6 @@
         pushPriceToInput(price);
     }
 
-    // 點選加價項目（包含加強檢查是否包含卸甲）
     function addAddon(name, price, minMins, maxMins, type, displayName, isRemoval = false) {
         if (!receiptData[type][name]) {
             receiptData[type][name] = { price: price, count: 0 };
@@ -346,7 +343,6 @@
         pushPriceToInput(price);
     }
 
-    // 穿戴甲專用
     function addServiceDirect(name, price, type, displayName) {
         if (!receiptData[type][name]) {
             receiptData[type][name] = { price: price, count: 0 };
@@ -424,14 +420,12 @@
             return;
         }
 
-        // 判斷當前該分類有沒有點選任何「卸甲項目」
         const hasRemoval = selectedAddons[type].some(addon => addon.isRemoval === true);
 
         let html = `<div class="result-title">📋 施作內容</div>`;
         let totalMinMins = 0;
         let totalMaxMins = 0;
 
-        // 計算主款式工時 (自動判定要卸或不卸)
         selectedServices[type].forEach(item => {
             let useMin = hasRemoval ? item.needRemoveMin : item.noRemoveMin;
             let useMax = hasRemoval ? item.needRemoveMax : item.noRemoveMax;
@@ -442,7 +436,6 @@
             html += `<div class="result-item"><span class="result-item-name">✔ ${item.name}</span><br><span class="result-item-time">${displayH}</span></div>`;
         });
 
-        // 計算加價項目工時
         selectedAddons[type].forEach(addon => {
             totalMinMins += addon.min;
             totalMaxMins += addon.max;
@@ -450,7 +443,6 @@
             html += `<div class="result-item"><span class="result-item-name">✔ ${addon.name}</span><br><span class="result-item-time">${displayH}</span></div>`;
         });
 
-        // 固定流程時間
         html += `<div class="result-item"><span class="result-item-name">✔ 拍照</span><br><span class="result-item-time">10分鐘</span></div>`;
         html += `<div class="result-item"><span class="result-item-name">✔ 討論款式</span><br><span class="result-item-time">15分鐘</span></div>`;
         totalMinMins += 25; 
